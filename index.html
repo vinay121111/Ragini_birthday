@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ragini birthday</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+      background: linear-gradient(45deg, #0a0a23, #3a067a, #00d4ff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      position: relative;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    .container {
+      text-align: center;
+      z-index: 2;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      text-shadow: 0 0 20px #00d4ff, 0 0 40px #ff00ff;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 1s ease-in-out;
+    }
+
+    h1.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    p {
+      font-size: 1.5rem;
+      margin: 20px 0;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+    }
+
+    p.visible {
+      opacity: 1;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      background: none;
+      border: 2px solid #00d4ff;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 50px;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px #00d4ff;
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite;
+    }
+
+    button:hover {
+      background: #00d4ff;
+      color: #0a0a23;
+      box-shadow: 0 0 30px #00d4ff;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #fff;
+      animation: float 10s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      100% {
+        transform: translateY(-1000px) rotate(360deg);
+      }
+    }
+
+    /* Queue Animation Styles */
+    .queue-container {
+      position: absolute;
+      top: 70%;
+      left: 0;
+      width: 100%;
+      height: 200px;
+      z-index: 3;
+      overflow: hidden;
+    }
+
+    .queue-item {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 15px;
+      border: 2px solid #00d4ff;
+      box-shadow: 0 0 20px #00d4ff;
+      opacity: 0;
+      transform: translateX(100vw) rotate(10deg);
+    }
+
+    .queue-item.active {
+      animation: slideAcross 6s linear forwards;
+    }
+
+    @keyframes slideAcross {
+      0% {
+        transform: translateX(100vw) rotate(10deg);
+        opacity: 0;
+      }
+
+      20% {
+        transform: translateX(50vw) rotate(0deg);
+        opacity: 1;
+      }
+
+      40% {
+        transform: translateX(50vw) rotate(0deg);
+        opacity: 1;
+      }
+
+      60% {
+        transform: translateX(0) rotate(-10deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(-100vw) rotate(-20deg);
+        opacity: 0;
+      }
+    }
+
+    .queue-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 1rem;
+      }
+
+      .queue-item {
+        width: 120px;
+        height: 120px;
+      }
+
+      .queue-container {
+        top: 65%;
+        height: 150px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas id="particleCanvas"></canvas>
+  <div class="container">
+    <h1 id="birthdayMessage"></h1>
+    <p id="additionalMessage"></p>
+    <button id="wishButton">Launch Birthday Wish!</button>
+  </div>
+  <div class="queue-container" id="queueContainer">
+    <img class="queue-item" src="WhatsApp Image 2025-04-11 at 7.07.05 AM (1).jpeg" alt="Nebula">
+    <img class="queue-item" src="WhatsApp Image 2025-04-11 at 8.20.14 AM.jpeg" alt="Galaxy">
+    <img class="queue-item" src="WhatsApp Image 2025-04-11 at 7.07.05 AM.jpeg" alt="Planet">
+    <!-- <img class="queue-item" src="https://images.unsplash.com/photo-1516331138075-f3adc1e149cd?q=80&w=800"
+      alt="Starfield"> -->
+ 
+    <video class="queue-item" loop muted>
+      <source src="WhatsApp Video 2025-04-11 at 7.08.07 AM.mp4" type="video/mp4">
+    </video>
+    <img class="queue-item" src="https://static.vecteezy.com/system/resources/previews/030/637/354/non_2x/cute-kawaii-cat-free-photo.jpg"
+    alt="Astronaut">
+  </div>
+
+  <script>
+    // Load Google Fonts
+    const link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+
+    // Particle Animation with Canvas
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.opacity = Math.random() * 0.5 + 0.5;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+
+    const particles = Array.from({ length: 100 }, () => new Particle());
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+
+    // Floating Stars
+    function createStar() {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.width = `${Math.random() * 3 + 1}px`;
+      star.style.height = star.style.width;
+      star.style.left = `${Math.random() * 100}vw`;
+      star.style.top = `${Math.random() * 100}vh`;
+      document.body.appendChild(star);
+      setTimeout(() => star.remove(), 10000);
+    }
+
+    setInterval(createStar, 500);
+
+    // Typing Effect and Queue Animation
+    const birthdayMessage = "Happy Birthday Ragini";
+    const additionalMessage = "Happy Birthday! May your year be as rare and brilliant as you are—full of bold moves, big smiles, and unforgettable vibes.";
+    const birthdayElement = document.getElementById('birthdayMessage');
+    const additionalElement = document.getElementById('additionalMessage');
+    const wishButton = document.getElementById('wishButton');
+    const queueItems = document.querySelectorAll('.queue-item');
+
+    async function typeText(element, text, delay = 100) {
+      for (const char of text) {
+        element.textContent += char;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+
+    async function animateQueue() {
+      for (const [index, item] of queueItems.entries()) {
+        if (item.tagName === 'VIDEO') {
+          item.play();
+        }
+        item.classList.add('active');
+        await new Promise(resolve => setTimeout(resolve, 6000)); // Wait for animation to complete
+        item.classList.remove('active');
+        item.style.transform = 'translateX(100vw) rotate(10deg)';
+        item.style.opacity = '0';
+      }
+    }
+
+    // Button Interaction
+    wishButton.addEventListener('click', async () => {
+      wishButton.style.display = 'none';
+      birthdayElement.classList.add('visible');
+      await typeText(birthdayElement, birthdayMessage, 150);
+      additionalElement.classList.add('visible');
+      await typeText(additionalElement, additionalMessage, 50);
+      await animateQueue();
+    });
+
+    // Resize Canvas on Window Resize
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+
+</body>
+
+</html>
